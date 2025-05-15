@@ -331,7 +331,7 @@ m.get_root().html.add_child(Element(legend_html))
 footer_html = '''
 <div class="map-footer">
     <div style="max-width: 75%; margin: auto;">
-        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on an individual campus to see the amounts that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data.</a>
+        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the amounts that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data.</a>
     </div>
 </div>
 '''
