@@ -309,7 +309,7 @@ window.addEventListener('load', function() {{
             var imgData = canvas.toDataURL("image/png");
             var link = document.createElement("a");
             link.href = imgData;
-            link.download = "CSHB2 Permanent Teacher Retention Allotment Map.png";
+            link.download = "CSHB2 Teacher Retention Allotment Map.png";
             link.click();
         }});
     }});
@@ -349,6 +349,7 @@ for _, r in gdf.iterrows():
     Senate District {r['district_name']}<br>
     <b>{r['School Name']} – {r['District Name']}</b><br>
     <i>{r['District Type']}</i><br>
+    School Enrollment (Oct 2023): {r['School Enrollment as of Oct 2023']:,}<br>
     District Enrollment (Oct 2023): {enroll:,}<br><br>
     <table style="width:100%; text-align:center; border:1px solid black; border-collapse:collapse;">
       <tr>
