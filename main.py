@@ -47,13 +47,19 @@ m = folium.Map(
     zoom_start=6,
     tiles="CartoDB positron",
     control_scale=True,
+    zoom_snap=0.25,
+    zoom_delta=0.25,
     # prefer_canvas=True
 )
+# Fit map to cover all of Texas on initial load
+minx, miny, maxx, maxy = senate.total_bounds
+m.fit_bounds([[miny, minx], [maxy, maxx]])
 m_name = m.get_name()
 
 m.get_root().header.add_child(JavascriptLink(
     "https://unpkg.com/leaflet-image@0.4.0/leaflet-image.js"
 ))
+m.get_root().header.add_child(Element('<title>CSHB 2: Permanent Teacher Retention Allotment Map</title>'))
 
 # === CREATE CUSTOM MARKER PANE ===
 pane_script = Element(f"""
