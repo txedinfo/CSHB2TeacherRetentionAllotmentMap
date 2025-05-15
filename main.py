@@ -64,12 +64,10 @@ og_meta = Element("""
     <!-- Open Graph / Twitter meta tags for link previews -->
     <meta property="og:title" content="CSHB 2: Teacher Retention Allotment Map" />
     <meta property="og:description" content="An interactive statewide map of Texas senate districts showing per-teacher retention allotments by experience." />
-    // <meta property="og:image" content="https://yourdomain.com/path/to/preview.png" />
     <meta property="og:url" content="https://txedinfo.github.io/CSHB2TeacherRetentionAllotmentMap/" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="CSHB 2: Teacher Retention Allotment Map" />
     <meta name="twitter:description" content="An interactive statewide map of Texas senate districts showing per-teacher retention allotments by experience." />
-    // <meta name="twitter:image" content="https://yourdomain.com/path/to/preview.png" />
 """)
 m.get_root().header.add_child(og_meta)
 
