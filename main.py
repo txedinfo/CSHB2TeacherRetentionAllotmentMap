@@ -233,7 +233,7 @@ m.get_root().html.add_child(Element(screenshot_html))
 for _, r in gdf.iterrows():
     lat, lon = r.geometry.y, r.geometry.x
     enroll = r["District Enrollment as of Oct 2023"]
-    color = "darkblue" if enroll <= 5000 else "darkred"
+    color = "#0D92F4" if enroll <= 5000 else "#F95454"
     # smaller, semi-transparent markers with black border
     if r["District Type"] == "CHARTER":
         marker_district = folium.RegularPolygonMarker(
@@ -301,25 +301,25 @@ legend_html = """
 ">
     <div>
         <svg width="12" height="12">
-            <circle cx="6" cy="6" r="5" fill="darkblue" stroke="black" stroke-width="1"></circle>
+            <circle cx="6" cy="6" r="5" fill="#0D92F4" stroke="black" stroke-width="1"></circle>
         </svg>
         Enrollment ≤ 5,000 (Public School)
     </div>
     <div>
         <svg width="12" height="12">
-            <circle cx="6" cy="6" r="5" fill="darkred" stroke="black" stroke-width="1"></circle>
+            <circle cx="6" cy="6" r="5" fill="#F95454" stroke="black" stroke-width="1"></circle>
         </svg>
         Enrollment > 5,000 (Public School)
     </div>
     <div>
         <svg width="12" height="12">
-            <rect x="1" y="1" width="10" height="10" fill="darkblue" stroke="black" stroke-width="1"></rect>
+            <rect x="1" y="1" width="10" height="10" fill="#0D92F4" stroke="black" stroke-width="1"></rect>
         </svg>
         Enrollment ≤ 5,000 (Charter)
     </div>
     <div>
         <svg width="12" height="12">
-            <rect x="1" y="1" width="10" height="10" fill="darkred" stroke="black" stroke-width="1"></rect>
+            <rect x="1" y="1" width="10" height="10" fill="#F95454" stroke="black" stroke-width="1"></rect>
         </svg>
         Enrollment > 5,000 (Charter)
     </div>
