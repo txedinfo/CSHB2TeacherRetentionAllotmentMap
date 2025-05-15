@@ -147,18 +147,91 @@ distmap_js = "{" + ",".join(
     for d in district_groups
 ) + "}"
 bounds_js = json.dumps(bounds_dict)
-dropdown = f"""
-<div style="position: fixed; top: 10px; right: 10px; z-index:9999; background: none; padding: 0;">  
-    <select id="districtDropdown">
-    <option value="">All Schools</option>
-    {options_html}
-  </select>
-</div>
+m_dropdown_checkbox = """
+<label style="font-size:12px;">
+  <input type="checkbox" id="isolateToggle" style="font-size: 12px"/>
+    Isolate Small Charters/<br>
+  <span style="display:block; text-align:right; width:100%;">Large Public Schools</span>
+</label>
+"""
+new_dropdown_block = f"""
+<style>
+.district-selector {{
+    background: white;
+    padding: 10px;
+    border: 1px solid gray;
+    font-size: 12px;
+}}
+</style>
 <script>
 window.addEventListener('load', function() {{
     var map = {m_name};
+    var container = L.DomUtil.create('div', 'district-selector');
+    container.innerHTML = `
+      <select id="districtDropdown" style="display:block; margin-bottom:4px; font-size:12px;">
+        <option value="">All Schools</option>
+        {options_html}
+      </select>
+      {m_dropdown_checkbox}
+    `;
+    L.DomEvent.disableClickPropagation(container);
+
+    var DistrictControl = L.Control.extend({{
+        options: {{ position: 'topright' }},
+        onAdd: function(map) {{
+            return container;
+        }}
+    }});
+    map.addControl(new DistrictControl());
+
     var distMap = {distmap_js};
     var boundsMap = {bounds_js};
+
+    // build an object mapping each district to its markers
+    var markerLayersByDistrict = {{}};
+    for (var k in distMap) {{
+        markerLayersByDistrict[k] = [];
+    }}
+    map.eachLayer(function(layer) {{
+        if (layer instanceof L.CircleMarker || (layer.options && layer.options.numberOfSides === 4)) {{
+            for (var d in distMap) {{
+                if (distMap[d].hasLayer(layer)) {{
+                    markerLayersByDistrict[d].push(layer);
+                }}
+            }}
+        }}
+    }});
+
+    function applyFilter() {{
+      var checked = document.getElementById('isolateToggle').checked;
+      var sel = document.getElementById('districtDropdown').value;
+      // hide everything first
+      Object.values(markerLayersByDistrict).flat().forEach(layer => {{
+        if (map.hasLayer(layer)) map.removeLayer(layer);
+      }});
+      if (!checked) {{
+        // show all markers in selected district or all
+        if (sel) {{
+          markerLayersByDistrict[sel].forEach(layer => map.addLayer(layer));
+        }} else {{
+          Object.values(markerLayersByDistrict).flat().forEach(layer => map.addLayer(layer));
+        }}
+      }} else {{
+        // isolate small charters / large public
+        var targets = sel ? [sel] : Object.keys(markerLayersByDistrict);
+        targets.forEach(d => {{
+          markerLayersByDistrict[d].forEach(layer => {{
+            var isCharterSmall = layer.options.numberOfSides === 4 && layer.options.fillColor === "#0D92F4";
+            var isPublicLarge = layer.options.numberOfSides !== 4 && layer.options.fillColor === "#F95454";
+            if (isCharterSmall || isPublicLarge) {{
+              map.addLayer(layer);
+            }}
+          }});
+        }});
+      }}
+    }}
+
+    document.getElementById('isolateToggle').addEventListener('change', applyFilter);
 
     document.getElementById('districtDropdown').addEventListener('change', function(e) {{
         var sel = e.target.value;
@@ -186,6 +259,7 @@ window.addEventListener('load', function() {{
             }}
             map.setView([31.0, -99.0], 6);
         }}
+        applyFilter();
     }});
 
     // bind marker click to open their popups
@@ -199,7 +273,7 @@ window.addEventListener('load', function() {{
 }});
 </script>
 """
-m.get_root().html.add_child(Element(dropdown))
+m.get_root().html.add_child(Element(new_dropdown_block))
 
 
 # === SCREENSHOT BUTTON VIA leaflet-image ===
@@ -306,7 +380,7 @@ legend_html = """
     padding: 10px;
     border: 1px solid gray;
     z-index: 9999;
-    font-size: 14px;
+    font-size: 12px;
 ">
     <div>
         <svg width="12" height="12">
@@ -339,7 +413,7 @@ m.get_root().html.add_child(Element(legend_html))
 # === ADD FOOTER ===
 footer_html = '''
 <div class="map-footer">
-    <div style="max-width: 75%; margin: auto;">
+    <div style="max-width: 85%; margin: auto;">
         A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the amounts that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data.</a>
     </div>
 </div>
