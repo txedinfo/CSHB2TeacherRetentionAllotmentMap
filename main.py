@@ -59,7 +59,7 @@ m_name = m.get_name()
 m.get_root().header.add_child(JavascriptLink(
     "https://unpkg.com/leaflet-image@0.4.0/leaflet-image.js"
 ))
-m.get_root().header.add_child(Element('<title>CSHB 2: Permanent Teacher Retention Allotment Map</title>'))
+m.get_root().header.add_child(Element('<title>CSHB 2: TRA Map</title>'))
 
 # === CREATE CUSTOM MARKER PANE ===
 pane_script = Element(f"""
