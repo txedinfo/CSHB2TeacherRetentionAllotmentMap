@@ -283,6 +283,9 @@ for _, r in gdf.iterrows():
     """
     popup_district = folium.Popup(popup_html, max_width=300, sticky=True)
     marker_district.add_child(popup_district)
+    # add hover tooltip so popup shows temporarily on hover
+    tooltip = folium.Tooltip(popup_html, sticky=False)
+    marker_district.add_child(tooltip)
     # add to district groups
     dname = r.get('district_name')
     if pd.notnull(dname) and dname in district_groups:
