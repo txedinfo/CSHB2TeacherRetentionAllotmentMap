@@ -51,9 +51,10 @@ m = folium.Map(
     zoom_delta=0.25,
     # prefer_canvas=True
 )
+m_name = None  # forward declare for linter
 # Fit map to cover all of Texas on initial load
 minx, miny, maxx, maxy = senate.total_bounds
-m.fit_bounds([[miny, minx], [maxy, maxx]])
+# m.fit_bounds([[miny, minx], [maxy, maxx]])
 m_name = m.get_name()
 
 m.get_root().header.add_child(JavascriptLink(
@@ -298,7 +299,24 @@ window.addEventListener('load', function() {{
 }});
 </script>
 """
+
 m.get_root().html.add_child(Element(new_dropdown_block))
+
+# === DEFER INITIAL FIT BOUNDS UNTIL MAP READY ===
+default_bounds = [[float(miny), float(minx)], [float(maxy), float(maxx)]]
+default_bounds_js = json.dumps(default_bounds)
+defer_fit = Element(f"""
+<script>
+window.addEventListener('load', function() {{
+    var map = {m_name};
+    map.whenReady(function() {{
+        map.invalidateSize();
+        map.fitBounds({default_bounds_js});
+    }});
+}});
+</script>
+""")
+m.get_root().html.add_child(defer_fit)
 
 
 # === SCREENSHOT BUTTON VIA leaflet-image ===
