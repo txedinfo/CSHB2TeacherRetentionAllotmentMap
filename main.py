@@ -274,6 +274,19 @@ window.addEventListener('load', function() {{
 
     applyFilter();
 
+    // check URL for district param or hash
+    var hash = window.location.hash.substring(1);
+    var params = new URLSearchParams(window.location.search);
+    var param = params.get('district') || hash;
+    if (param) {{
+        var d = param.replace(/^SD/i, '');
+        if (distMap.hasOwnProperty(d)) {{
+            var dropdown = document.getElementById('districtDropdown');
+            dropdown.value = d;
+            dropdown.dispatchEvent(new Event('change'));
+        }}
+    }}
+
     // bind marker click to open their popups
     map.eachLayer(function(layer) {{
       if (layer instanceof L.Marker || layer instanceof L.CircleMarker) {{
