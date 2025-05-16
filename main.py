@@ -159,7 +159,7 @@ distmap_js = "{" + ",".join(
 bounds_js = json.dumps(bounds_dict)
 m_dropdown_checkbox = """
 <label style="font-size:12px;">
-  <input type="checkbox" id="isolateToggle" style="font-size: 12px"/>
+  <input type="checkbox" id="isolateToggle" checked style="font-size: 12px"/>
     Isolate Small Charters/<br>
   <span style="display:block; text-align:right; width:100%;">Large Public Schools</span>
 </label>
@@ -271,6 +271,8 @@ window.addEventListener('load', function() {{
         }}
         applyFilter();
     }});
+
+    applyFilter();
 
     // bind marker click to open their popups
     map.eachLayer(function(layer) {{
