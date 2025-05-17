@@ -27,6 +27,14 @@ def resolve_coords(r):
     return Point(lon, lat)
 df['geometry'] = df.apply(resolve_coords, axis=1)
 df = df[df.geometry.notnull()]
+
+df_teacher_data = pd.read_excel("Campus Teacher Profile.xlsx")
+
+df = pd.merge(df, df_teacher_data, how="right", on="School Number")
+
+# keep only rows where Full_Site_Address is NOT exactly "TX,  "
+df = df[df['Full_Site_Address'] != 'TX,  ']
+
 gdf = gpd.GeoDataFrame(df, geometry='geometry', crs="EPSG:4326")
 
 # === LOAD SENATE DISTRICTS ===
@@ -357,15 +365,75 @@ for _, r in gdf.iterrows():
             color='black', weight=1,
             fill=True, fill_color=color, fill_opacity=0.6
         )
+    # format base salary averages
+    beg_base = r['Teacher Beginning Base Salary Average']
+    if beg_base == 'MASKED' or beg_base is None or pd.isnull(beg_base):
+        beg_base_fmt = beg_base
+    else:
+        beg_base_fmt = f"{int(beg_base):,}"
+
+    mid_base = r['Teacher 1-5 Years Base Salary Average']
+    if mid_base == 'MASKED' or mid_base is None or pd.isnull(mid_base):
+        mid_base_fmt = mid_base
+    else:
+        mid_base_fmt = f"{int(mid_base):,}"
+
+    sen_base = r['Teacher 5+ Years Base Salary Average']
+    if sen_base == 'MASKED' or sen_base is None or pd.isnull(sen_base):
+        sen_base_fmt = sen_base
+    else:
+        sen_base_fmt = f"{int(round(sen_base)):,}"
+
     # build popup
     allot_short = 5000 if enroll <= 5000 else 2500
     allot_long = 10000 if enroll <= 5000 else 5500
+    # format 5+ years percent to one decimal unless masked or null
+    perc = r['Teacher 5+ Years Full Time Equiv Percent']
+    if perc == 'MASKED' or perc is None or pd.isnull(perc):
+        perc_fmt = perc
+    else:
+        perc_fmt = f"{perc:.1f}"
+        if ".0" in perc_fmt:
+            perc_fmt = perc_fmt.replace(".0", "")
+
+    # format 5+ years count to one decimal place unless masked or null
+    cnt = r['Teacher 5+ Years Full Time Equiv Count']
+    if cnt == 'MASKED' or cnt is None or pd.isnull(cnt):
+        cnt_fmt = cnt
+    else:
+        cnt_fmt = f"{cnt:.1f}"
+        if ".0" in cnt_fmt:
+            cnt_fmt = cnt_fmt.replace(".0", "")
+
+    # format beginning count display (mask entire cell if any part is MASKED)
+    beg_cnt = r['Teacher Beginning Full Time Equiv Count']
+    beg_perc_val = r['Teacher Beginning Full Time Equiv Percent']
+    if beg_cnt == 'MASKED' or beg_perc_val == 'MASKED':
+        beg_count_display = 'MASKED'
+    else:
+        beg_count_display = f"{beg_cnt} ({beg_perc_val}%)"
+
+    # format mid count display (mask entire cell if any part is MASKED)
+    mid_cnt = r['Teacher 1-5 Years Full Time Equiv Count']
+    mid_perc_val = r['Teacher 1-5 Years Full Time Equiv Percent']
+    if mid_cnt == 'MASKED' or mid_perc_val == 'MASKED':
+        mid_count_display = 'MASKED'
+    else:
+        mid_count_display = f"{mid_cnt} ({mid_perc_val}%)"
+
+    # format senior count display (mask entire cell if any part is MASKED)
+    if cnt_fmt == 'MASKED' or perc_fmt == 'MASKED':
+        sen_count_display = 'MASKED'
+    else:
+        sen_count_display = f"{cnt_fmt} ({perc_fmt}%)"
+
     popup_html = f"""
     Senate District {r['district_name']}<br>
     <b>{r['School Name']} – {r['District Name']}</b><br>
     <i>{r['District Type']}</i><br>
     School Enrollment (Oct 2023): {r['School Enrollment as of Oct 2023']:,}<br>
     District Enrollment (Oct 2023): {enroll:,}<br><br>
+    <div>CSHB 2: Teacher Retention Allotment</div>
     <table style="width:100%; text-align:center; border:1px solid black; border-collapse:collapse;">
       <tr>
         <th style="border:1px solid black; white-space:normal;">Years Experience</th>
@@ -378,6 +446,30 @@ for _, r in gdf.iterrows():
       <tr>
         <td style="border:1px solid black;">5+ years experience</td>
         <td style="border:1px solid black;">${allot_long:,}</td>
+      </tr>
+    </table>
+    <br>
+    <div>2023-2024 Campus Staff</div>
+    <table style="width:100%; text-align:center; border:1px solid black; border-collapse:collapse;">
+      <tr>
+        <th style="border:1px solid black; white-space:normal;">Years<br>Experience</th>
+        <th style="border:1px solid black; white-space:normal;">Count (% of Total)</th>
+        <th style="border:1px solid black; white-space:normal;">Base<br>Salary Avg.</th>
+      </tr>
+      <tr>
+        <td style="border:1px solid black;">Beginning teachers</td>
+        <td style="border:1px solid black;">{beg_count_display}</td>
+        <td style="border:1px solid black;">{beg_base_fmt if beg_base_fmt=='MASKED' else f"${beg_base_fmt}"}</td>
+      </tr>
+      <tr>
+        <td style="border:1px solid black;">1-5 years experience</td>
+        <td style="border:1px solid black;">{mid_count_display}</td>
+        <td style="border:1px solid black;">{mid_base_fmt if mid_base_fmt=='MASKED' else f"${mid_base_fmt}"}</td>
+      </tr>
+    <tr>
+        <td style="border:1px solid black;">5+ years experience</td>
+        <td style="border:1px solid black;">{sen_count_display}</td>
+        <td style="border:1px solid black;">{sen_base_fmt if sen_base_fmt=='MASKED' else f"${sen_base_fmt}"}</td>
       </tr>
     </table>
     """
@@ -440,7 +532,7 @@ m.get_root().html.add_child(Element(legend_html))
 footer_html = '''
 <div class="map-footer">
     <div style="max-width: 85%; margin: auto;">
-        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the amounts that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data.</a>
+        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the pay raises that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data</a> and <a href='https://rptsvr1.tea.texas.gov/perfreport/tapr/2024/index.html' target="blank">2023-2024 TAPR staff profile.</a>
     </div>
 </div>
 '''

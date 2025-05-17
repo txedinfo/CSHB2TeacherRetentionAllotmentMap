@@ -60,4 +60,8 @@ ENV/
 # Local settings, secrets
 local_settings.py
 
+# Shapefiles
 PLANS2168/
+
+# Excel files
+*.xlsx
