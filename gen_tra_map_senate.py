@@ -67,14 +67,14 @@ m_name = m.get_name()
 m.get_root().header.add_child(JavascriptLink(
     "https://unpkg.com/leaflet-image@0.4.0/leaflet-image.js"
 ))
-m.get_root().header.add_child(Element('<title>CSHB 2: TRA Map</title>'))
+m.get_root().header.add_child(Element('<title>CSHB 2: TRA Map - TX Senate</title>'))
 og_meta = Element("""
     <!-- Open Graph / Twitter meta tags for link previews -->
-    <meta property="og:title" content="CSHB 2: Teacher Retention Allotment Map" />
+    <meta property="og:title" content="CSHB 2: Teacher Retention Allotment Map - TX Senate" />
     <meta property="og:description" content="An interactive statewide map of Texas senate districts showing per-teacher retention allotments by experience." />
     <meta property="og:url" content="https://txedinfo.github.io/CSHB2TeacherRetentionAllotmentMap/" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="CSHB 2: Teacher Retention Allotment Map" />
+    <meta name="twitter:title" content="CSHB 2: Teacher Retention Allotment Map - TX Senate" />
     <meta name="twitter:description" content="An interactive statewide map of Texas senate districts showing per-teacher retention allotments by experience." />
 """)
 m.get_root().header.add_child(og_meta)
@@ -126,7 +126,7 @@ title_html = '''
     }
 </style>
 <div class="map-title">
-    CSHB 2: Teacher Retention Allotment Map
+    CSHB 2: Teacher Retention Allotment Map - TX Senate
 </div>
 '''
 m.get_root().html.add_child(Element(title_html))
@@ -332,7 +332,7 @@ window.addEventListener('load', function() {{
             var imgData = canvas.toDataURL("image/png");
             var link = document.createElement("a");
             link.href = imgData;
-            link.download = "CSHB2 Teacher Retention Allotment Map.png";
+            link.download = "CSHB2 Teacher Retention Allotment Map - TX Senate.png";
             link.click();
         }});
     }});
