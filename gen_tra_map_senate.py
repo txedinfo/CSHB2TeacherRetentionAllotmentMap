@@ -187,7 +187,7 @@ window.addEventListener('load', function() {{
     var container = L.DomUtil.create('div', 'district-selector');
     container.innerHTML = `
       <select id="districtDropdown" style="display:block; margin-bottom:4px; font-size:12px;">
-        <option value="">All Schools</option>
+        <option value="">All Senate Districts</option>
         {options_html}
       </select>
       {m_dropdown_checkbox}
