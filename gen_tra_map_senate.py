@@ -385,8 +385,8 @@ for _, r in gdf.iterrows():
         sen_base_fmt = f"{int(round(sen_base)):,}"
 
     # build popup
-    allot_short = 5000 if enroll <= 5000 else 2500
-    allot_long = 10000 if enroll <= 5000 else 5500
+    allot_short = 4000 if enroll <= 5000 else 2500
+    allot_long = 8000 if enroll <= 5000 else 5000
     # format 5+ years percent to one decimal unless masked or null
     perc = r['Teacher 5+ Years Full Time Equiv Percent']
     if perc == 'MASKED' or perc is None or pd.isnull(perc):
@@ -532,7 +532,7 @@ m.get_root().html.add_child(Element(legend_html))
 footer_html = '''
 <div class="map-footer">
     <div style="max-width: 85%; margin: auto;">
-        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the pay raises that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data</a> and <a href='https://rptsvr1.tea.texas.gov/perfreport/tapr/2024/index.html' target="blank">2023-2024 TAPR staff profile.</a>
+        A visualization of data relevant to the Teacher Retention Allotment (Sec. 48.158) provision in CSHB 2. Click on a campus to see the pay raises that teachers at the campus would receive based on their years of experience and the district's/charter's student enrollment. This analysis was completed on May 15, 2025 using the <a href='https://tealprod.tea.state.tx.us/Tea.AskTed.Web/Forms/ArchivedSchoolAndDistrictDataFiles.aspx' target="blank">Spring 2024 AskTED school data</a> and <a href='https://rptsvr1.tea.texas.gov/perfreport/tapr/2024/index.html' target="blank">2023-2024 TAPR staff profile,</a> and updated on May 22, 2025 based on the changes negotiated between the Texas House and Senate.
     </div>
 </div>
 '''
